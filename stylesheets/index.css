@@ -1,0 +1,86 @@
+#chart {
+  height: 600px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+div.tooltip {
+  position: absolute;
+  text-align: center;
+  width: 60px;
+  height: 12px;
+  padding: 8px;
+  font: 10px sans-serif;
+  background: #ddd;
+  border: solid 1px #aaa;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+/*.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  width: 16%;
+  padding-top: 12px;
+  padding-bottom: 16px;
+  padding-right: 12px;
+  padding-left: 12px;
+  font: 16px sans-serif;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 8px;
+  text-align: center;
+}*/
+
+.d3-tip {
+  position: absolute;
+  text-align: center;
+  font: 16px sans-serif;
+  width: 200px;
+  height: auto;
+  padding: 10px;
+  padding-top: 12px;
+  background-color: #FFFFF1;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 6px;
+  -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+  -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+/*Creates a small triangle extender for the tooltip*/
+
+/*.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}*/
+
+/*Style northward tooltips differently */
+.d3-tip.n:after {
+  margin: -2.1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+
