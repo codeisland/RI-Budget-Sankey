@@ -615,7 +615,7 @@ d3.sankey = function() {
     
       var theLink = {};
 
-      theLink = chart.append( "g" ).selectAll( ".link" )
+      theLink = chart.selectAll("#chart")
               .data( obj.linkers )
           .enter().append( "path" )
               .attr( "class", "link" )
@@ -709,7 +709,9 @@ d3.sankey = function() {
   }
         
 
-    //---------------- labels --------------------------------------------------------
+//---------------- labels --------------------------------------------------------
+    
+    // ***** all parts of the graph_labels creation ****** (text)
 
   function Labels() {
 
@@ -726,7 +728,7 @@ d3.sankey = function() {
   }
 
 
-  graph_labels = Labels();
+  graph_labels = Object.create( Labels() );
 
   lS = {}; // label styles
 
@@ -796,7 +798,7 @@ d3.sankey = function() {
   var allLables = graph_labels
 
 
-  graph_headers = Labels();
+  graph_headers = Object.create( Labels() );
 
   var catagory = ["Revenue Source", "Fund", "", "Agency"];
 
@@ -824,10 +826,10 @@ d3.sankey = function() {
 
       var theNode = {};
 
-      theNode = chart.append("g").selectAll(".node")
+      theNode = chart.selectAll("#chart")
               .data(obj.eachNodes)
-          .enter().append("g")
-              .attr( "class", "node" )
+          .enter().append( "rect" )
+              // .attr( "class", "node" )
               .attr( "transform", function ( d ) { return "translate(" + d.x + "," + d.y + ")"; } )
 
       return theNode;
@@ -913,8 +915,8 @@ d3.sankey = function() {
 
 
     //make the nodes
-  graph_rects.append( "rect" )
-      .attr( "class", "nodeRect" )
+  graph_rects
+      .attr( "class", "node" )
       .attr( "height", function ( d ) { return d.dy; } )
       .attr( "width", sankey.nodeWidth() )
       .style( rS.main_node_style );
@@ -929,18 +931,16 @@ d3.sankey = function() {
 
 
 
-  function node_over( its, other_nodes, filtered_Links ) {
+  function node_over( its, data, other_nodes, filtered_Links, not_filtered_links ) {
 
-      var currentNode = its.datum(),
-          targetNode = its.select( "rect" ),
-          locationName =currentNode.name;
-
-      targetNode.transition().duration( 0002 ).style( rS.node_hovered );
+      var locationName =data.name;
+      
+      its.transition().duration( 0002 ).style( rS.node_hovered );
 
       allNodes = d3.selectAll( "rect" );
 
       other_nodes = allNodes.filter( function ( d ) { // loops through and returns true when not compValue
-          return d !== currentNode; 
+          return d !== data; 
       } );
 
       other_nodes.transition().delay( 500 ).duration( 1000 ).style( rS.node_not_hovered );
@@ -959,7 +959,19 @@ d3.sankey = function() {
               }
       } );
 
-      allLinks.transition().duration( 1500 ).style( pS.link_not_from_node );
+      not_filtered_links = allLinks.filter( function ( d ) {
+          var result1 = d.sourceName === locationName,
+              result2 = d.targetName === locationName;
+          if (!result1) { 
+              return true;
+          } else if (!result2) {
+              return true;
+          } else {
+              return false;
+              }
+      } );
+
+      not_filtered_links.transition().duration( 1500 ).style( pS.link_not_from_node );
       filtered_Links.transition().duration( 1500 ).style( pS.link_from_node );
 
   }
@@ -969,10 +981,9 @@ d3.sankey = function() {
 
       var allNodes = d3.selectAll( "rect" ),
           allLinks = d3.selectAll( "path" ),
-          targetNode = its.select( "rect" ),
           othter_nodes;
 
-      targetNode.transition().style( rS.node_return );
+      its.transition().duration( 250 ).style( rS.node_return );
 
       othter_nodes = allNodes.filter( function ( d ) { return d !== its.datum(); }) ;
       //console.log("the node out",othter_nodes);
@@ -985,7 +996,7 @@ d3.sankey = function() {
 
 
 
-    // ***** all parts of the graph_labels creation ****** (text)
+
 
 
 
@@ -1004,12 +1015,13 @@ d3.sankey = function() {
 
 
   function focus_on(its) {
+      var data = its.datum();
 
-      if ( its.datum().type === "link" ) {
-          link_over( its );
+      if ( data.type !== "link" ) {
+          node_over( its, data );
       }
       else {
-          node_over( its );
+          link_over( its, data );
       }
 
   }
