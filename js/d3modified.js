@@ -536,11 +536,16 @@
     return s.replace(d3_requote_re, "\\$&");
   };
   var d3_requote_re = /[\\\^\$\*\+\?\|\[\]\(\)\.\{\}]/g;
-  var d3_subclass = {}.__proto__ ? function(object, prototype) {
-    object.__proto__ = prototype;
-  } : function(object, prototype) {
-    for (var property in prototype) object[property] = prototype[property];
-  };
+
+  //important in transistion and I think other things too.**************************************************************
+  var d3_subclass = {}.__proto__ ? function(object, prototype) { object.__proto__ = prototype; } 
+  		: function(object, prototype) {
+  			//console.log(object);
+    		for (var property in prototype) { 
+    			object[property] = prototype[property]; 
+    		}
+  		};
+
   function d3_selection(groups) {
     d3_subclass(groups, d3_selectionPrototype);
     return groups;
@@ -939,12 +944,15 @@
       callback.call(node, node.__data__, i, j);
     });
   };
-  function d3_selection_each(groups, callback) {
-    for (var j = 0, m = groups.length; j < m; j++) {
-      for (var group = groups[j], i = 0, n = group.length, node; i < n; i++) {
-        if (node = group[i]) callback(node, i, j);
-      }
+  function d3_selection_each(groups, callback) { //************************** i optimized this line of code
+  	var j, m = groups.length;
+    for (j = 0; j < m; j++) {
+    	var node, group = groups[j],i,n = group.length;
+      	for (i = 0; i < n; i++) {
+        	if (node = group[i]) callback(node, i, j);
+      	}
     }
+    //console.log(groups);
     return groups;
   }
   d3_selectionPrototype.call = function(callback) {
@@ -2076,7 +2084,7 @@
     return dsv;
   };
   d3.csv = d3.dsv(",", "text/csv");
-  d3.tsv = d3.dsv(" ", "text/tab-separated-values");
+  d3.tsv = d3.dsv("	", "text/tab-separated-values");
   var d3_timer_queueHead, d3_timer_queueTail, d3_timer_interval, d3_timer_timeout, d3_timer_active, d3_timer_frame = d3_window[d3_vendorSymbol(d3_window, "requestAnimationFrame")] || function(callback) {
     setTimeout(callback, 17);
   };
@@ -8551,26 +8559,45 @@
   });
   d3.svg.symbolTypes = d3_svg_symbols.keys();
   var d3_svg_symbolSqrt3 = Math.sqrt(3), d3_svg_symbolTan30 = Math.tan(30 * d3_radians);
-  d3_selectionPrototype.transition = function(name) {
-    var id = d3_transitionInheritId || ++d3_transitionId, ns = d3_transitionNamespace(name), subgroups = [], subgroup, node, transition = d3_transitionInherit || {
-      time: Date.now(),
-      ease: d3_ease_cubicInOut,
-      delay: 0,
-      duration: 250
-    };
-    for (var j = -1, m = this.length; ++j < m; ) {
-      subgroups.push(subgroup = []);
-      for (var group = this[j], i = -1, n = group.length; ++i < n; ) {
-        if (node = group[i]) d3_transitionNode(node, i, ns, id, transition);
-        subgroup.push(node);
-      }
-    }
-    return d3_transition(subgroups, ns, id);
+
+
+
+//****************************** transition begin **********************************************
+
+  d3_selectionPrototype.transition = function(name) { // 1. very first step
+
+    var id = d3_transitionInheritId || ++d3_transitionId, ns = d3_transitionNamespace(name), subgroups = [], subgroup, node, 
+    	transition = d3_transitionInherit || {
+      		time: Date.now(),
+      		ease: d3_ease_cubicInOut,
+      		delay: 0,
+      		duration: 250
+    	},
+    	j,
+    	m = this.length;
+
+	for ( j = -1; ++j < m; ) {
+		var group = this[j], i, n = group.length;
+  		subgroups.push(subgroup = []);
+		for ( i = -1; ++i < n; ) {
+			if (node = group[i]) d3_transitionNode(node, i, ns, id, transition); // this assignment makes no sense.. it works but does make sense
+				//console.log("This is name",id);// id add the different number ids to different transitions
+				subgroup.push(node);
+			}
+		}
+  
+    return d3_transition(subgroups, ns, id);// id is a number that keeps going up
   };
   d3_selectionPrototype.interrupt = function(name) {
-    return this.each(name == null ? d3_selection_interrupt : d3_selection_interruptNS(d3_transitionNamespace(name)));
+
+    return this.each(
+    	name == null ? d3_selection_interrupt : d3_selection_interruptNS( d3_transitionNamespace(name) )
+    );
+
   };
+
   var d3_selection_interrupt = d3_selection_interruptNS(d3_transitionNamespace());
+
   function d3_selection_interruptNS(ns) {
     return function() {
       var lock, active;
@@ -8581,21 +8608,36 @@
       }
     };
   }
-  function d3_transition(groups, ns, id) {
-    d3_subclass(groups, d3_transitionPrototype);
+
+  function d3_transition(groups, ns, id) { // returns an object with the id and namespace
+    d3_subclass(groups, d3_transitionPrototype); // subclass is a var from around line 500 adds all the methods to the group
     groups.namespace = ns;
     groups.id = id;
+    //console.log(d3_transitionPrototype);
     return groups;
   }
-  var d3_transitionPrototype = [], d3_transitionId = 0, d3_transitionInheritId, d3_transitionInherit;
+
+  var d3_transitionPrototype = [], // d3.transition.prototype
+  	  d3_transitionId = 0,
+  	  d3_transitionInheritId,
+  	  d3_transitionInherit;
+
   d3_transitionPrototype.call = d3_selectionPrototype.call;
   d3_transitionPrototype.empty = d3_selectionPrototype.empty;
   d3_transitionPrototype.node = d3_selectionPrototype.node;
   d3_transitionPrototype.size = d3_selectionPrototype.size;
-  d3.transition = function(selection, name) {
-    return selection && selection.transition ? d3_transitionInheritId ? selection.transition(name) : selection : d3_selectionRoot.transition(selection);
+
+  d3.transition = function(selection, name) { // where the transition is accessed by my code
+  	//console.log("This is name",selection && selection.transition );
+      	return selection && selection.transition ? 
+          	d3_transitionInheritId ? 
+          		selection.transition(name) 
+          		: selection 
+          		: d3_selectionRoot.transition(selection);
   };
+
   d3.transition.prototype = d3_transitionPrototype;
+
   d3_transitionPrototype.select = function(selector) {
     var id = this.id, ns = this.namespace, subgroups = [], subgroup, subnode, node;
     selector = d3_selection_selector(selector);
@@ -8613,6 +8655,7 @@
     }
     return d3_transition(subgroups, ns, id);
   };
+
   d3_transitionPrototype.selectAll = function(selector) {
     var id = this.id, ns = this.namespace, subgroups = [], subgroup, subnodes, node, subnode, transition;
     selector = d3_selection_selectorAll(selector);
@@ -8631,6 +8674,7 @@
     }
     return d3_transition(subgroups, ns, id);
   };
+
   d3_transitionPrototype.filter = function(filter) {
     var subgroups = [], subgroup, group, node;
     if (typeof filter !== "function") filter = d3_selection_filter(filter);
@@ -8644,6 +8688,7 @@
     }
     return d3_transition(subgroups, this.namespace, this.id);
   };
+
   d3_transitionPrototype.tween = function(name, tween) {
     var id = this.id, ns = this.namespace;
     if (arguments.length < 2) return this.node()[ns][id].tween.get(name);
@@ -8653,15 +8698,19 @@
       node[ns][id].tween.set(name, tween);
     });
   };
-  function d3_transition_tween(groups, name, value, tween) {
+  function d3_transition_tween(groups, name, value, tween) {  // part 3*******************************************************
+
     var id = groups.id, ns = groups.namespace;
+
     return d3_selection_each(groups, typeof value === "function" ? function(node, i, j) {
       node[ns][id].tween.set(name, tween(value.call(node, node.__data__, i, j)));
     } : (value = tween(value), function(node) {
       node[ns][id].tween.set(name, value);
     }));
   }
+
   d3_transitionPrototype.attr = function(nameNS, value) {
+
     if (arguments.length < 2) {
       for (value in nameNS) this.attr(value, nameNS[value]);
       return this;
@@ -8689,8 +8738,11 @@
         });
       });
     }
+
     return d3_transition_tween(this, "attr." + nameNS, value, name.local ? attrTweenNS : attrTween);
+
   };
+
   d3_transitionPrototype.attrTween = function(nameNS, tween) {
     var name = d3.ns.qualify(nameNS);
     function attrTween(d, i) {
@@ -8705,9 +8757,13 @@
         this.setAttributeNS(name.space, name.local, f(t));
       };
     }
+
     return this.tween("attr." + nameNS, name.local ? attrTweenNS : attrTween);
+
   };
-  d3_transitionPrototype.style = function(name, value, priority) {
+
+  d3_transitionPrototype.style = function(name, value, priority) { ////////////// part 2
+
     var n = arguments.length;
     if (n < 3) {
       if (typeof name !== "string") {
@@ -8717,9 +8773,11 @@
       }
       priority = "";
     }
+
     function styleNull() {
       this.style.removeProperty(name);
     }
+
     function styleString(b) {
       return b == null ? styleNull : (b += "", function() {
         var a = d3_window.getComputedStyle(this, null).getPropertyValue(name), i;
@@ -8728,8 +8786,11 @@
         });
       });
     }
-    return d3_transition_tween(this, "style." + name, value, styleString);
+
+    return d3_transition_tween(this, "style." + name, value, styleString); // the part that is of concern to me
+
   };
+
   d3_transitionPrototype.styleTween = function(name, tween, priority) {
     if (arguments.length < 3) priority = "";
     function styleTween(d, i) {
@@ -8764,15 +8825,22 @@
       node[ns][id].ease = value;
     });
   };
+
   d3_transitionPrototype.delay = function(value) {
-    var id = this.id, ns = this.namespace;
+
+    var id = this.id,
+    	ns = this.namespace;
+    	//console.log(this.node());
+
     if (arguments.length < 1) return this.node()[ns][id].delay;
+
     return d3_selection_each(this, typeof value === "function" ? function(node, i, j) {
       node[ns][id].delay = +value.call(node, node.__data__, i, j);
     } : (value = +value, function(node) {
       node[ns][id].delay = value;
     }));
   };
+
   d3_transitionPrototype.duration = function(value) {
     var id = this.id, ns = this.namespace;
     if (arguments.length < 1) return this.node()[ns][id].duration;
@@ -8782,6 +8850,7 @@
       node[ns][id].duration = value;
     }));
   };
+
   d3_transitionPrototype.each = function(type, listener) {
     var id = this.id, ns = this.namespace;
     if (arguments.length < 2) {
@@ -8823,10 +8892,15 @@
     }
     return d3_transition(subgroups, ns, id1);
   };
-  function d3_transitionNamespace(name) {
+
+  function d3_transitionNamespace(name) {// add __transition__ namespace when called
+
     return name == null ? "__transition__" : "__transition_" + name + "__";
+
   }
+
   function d3_transitionNode(node, i, ns, id, inherit) {
+  	//console.log(node);
     var lock = node[ns] || (node[ns] = {
       active: 0,
       count: 0
@@ -8888,6 +8962,7 @@
       }, 0, time);
     }
   }
+
   d3.svg.axis = function() {
     var scale = d3.scale.linear(), orient = d3_svg_axisDefaultOrient, innerTickSize = 6, outerTickSize = 6, tickPadding = 3, tickArguments_ = [ 10 ], tickValues = null, tickFormat_;
     function axis(g) {
