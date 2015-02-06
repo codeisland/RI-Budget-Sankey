@@ -548,6 +548,7 @@
 
   function d3_selection(groups) {
     d3_subclass(groups, d3_selectionPrototype);
+    //console.log(groups);
     return groups;
   }
   var d3_select = function(s, n) {
@@ -898,25 +899,35 @@
   d3_selectionPrototype.datum = function(value) {
     return arguments.length ? this.property("__data__", value) : this.property("__data__");
   };
+//*****************************************************************************************************************
   d3_selectionPrototype.filter = function(filter) {
-    var subgroups = [], subgroup, group, node;
+    //console.log(filter);
+    var subgroups = [],
+        subgroup,
+        group,
+        node;
+
+    // first part I do not use
     if (typeof filter !== "function") filter = d3_selection_filter(filter);
     for (var j = 0, m = this.length; j < m; j++) {
       subgroups.push(subgroup = []);
       subgroup.parentNode = (group = this[j]).parentNode;
       for (var i = 0, n = group.length; i < n; i++) {
         if ((node = group[i]) && filter.call(node, node.__data__, i, j)) {
+          //console.log(filter.call(node, node.__data__, i, j));
           subgroup.push(node);
         }
       }
     }
     return d3_selection(subgroups);
   };
+
   function d3_selection_filter(selector) {
     return function() {
       return d3_selectMatches(this, selector);
     };
   }
+
   d3_selectionPrototype.order = function() {
     for (var j = -1, m = this.length; ++j < m; ) {
       for (var group = this[j], i = group.length - 1, next = group[i], node; --i >= 0; ) {
@@ -2085,14 +2096,31 @@
   };
   d3.csv = d3.dsv(",", "text/csv");
   d3.tsv = d3.dsv("	", "text/tab-separated-values");
-  var d3_timer_queueHead, d3_timer_queueTail, d3_timer_interval, d3_timer_timeout, d3_timer_active, d3_timer_frame = d3_window[d3_vendorSymbol(d3_window, "requestAnimationFrame")] || function(callback) {
-    setTimeout(callback, 17);
-  };
+
+  var d3_timer_queueHead,
+      d3_timer_queueTail,
+      d3_timer_interval,
+      d3_timer_timeout,
+      d3_timer_active,
+      d3_timer_frame = d3_window[d3_vendorSymbol(d3_window, "requestAnimationFrame")] || function(callback) {
+          setTimeout(callback, 17);
+      };
+
+      // d3_timer_frame = ( function(){
+      //   return  d3_window.requestAnimationFrame || 
+      //     d3_window.webkitRequestAnimationFrame ||
+      //     d3_window.mozRequestAnimationFrame    ||
+      //     function( callback ){
+      //       d3_window.setTimeout(callback, 1000 / 60);
+      //     };
+      // })();
+
   d3.timer = function(callback, delay, then) {
     var n = arguments.length;
     if (n < 2) delay = 0;
     if (n < 3) then = Date.now();
-    var time = then + delay, timer = {
+    var time = then + delay, 
+    timer = {
       c: callback,
       t: time,
       f: false,
@@ -2106,25 +2134,28 @@
       d3_timer_frame(d3_timer_step);
     }
   };
-  function d3_timer_step() {
-    var now = d3_timer_mark(), delay = d3_timer_sweep() - now;
-    if (delay > 24) {
-      if (isFinite(delay)) {
+  function d3_timer_step() {// sets timeres based off of delays
+    var now = d3_timer_mark(),
+    	delay = d3_timer_sweep() - now;
+    if (delay > 24) {// in my code this only happens when i first do it
+      if (isFinite(delay)) { // is isFinite only happens if no transition is happening
         clearTimeout(d3_timer_timeout);
-        d3_timer_timeout = setTimeout(d3_timer_step, delay);
+        d3_timer_timeout = setTimeout(d3_timer_step, delay);// only happens on the nodes
       }
       d3_timer_interval = 0;
     } else {
       d3_timer_interval = 1;
-      d3_timer_frame(d3_timer_step);
+      d3_timer_frame(d3_timer_step); //keeps counting upward
     }
   }
+
   d3.timer.flush = function() {
     d3_timer_mark();
     d3_timer_sweep();
   };
   function d3_timer_mark() {
     var now = Date.now();
+    //console.log( "d3_timer_active", d3_timer_active );
     d3_timer_active = d3_timer_queueHead;
     while (d3_timer_active) {
       if (now >= d3_timer_active.t) d3_timer_active.f = d3_timer_active.c(now - d3_timer_active.t);
@@ -2132,19 +2163,46 @@
     }
     return now;
   }
-  function d3_timer_sweep() {
-    var t0, t1 = d3_timer_queueHead, time = Infinity;
-    while (t1) {
-      if (t1.f) {
-        t1 = t0 ? t0.n = t1.n : d3_timer_queueHead = t1.n;
-      } else {
-        if (t1.t < time) time = t1.t;
-        t1 = (t0 = t1).n;
+
+  function d3_timer_sweep() { // well this is confusing
+      var time0,
+          timer_queue = d3_timer_queueHead,
+          time = Infinity;
+
+          //console.log("time thing",timer_queue);
+      while (timer_queue) {
+          if (timer_queue.f) {
+              timer_queue = time0 ? time0.n = timer_queue.n : d3_timer_queueHead = timer_queue.n;
+
+          } else {
+              if (timer_queue.t < time) time = timer_queue.t;
+              timer_queue = (time0 = timer_queue).n;
+          }
       }
-    }
-    d3_timer_queueTail = t0;
-    return time;
+      //console.log("time thing",time)
+      //console.log(time);
+      d3_timer_queueTail = time0; // this reports out to its variable
+
+      return time;
   }
+
+  //   function d3_timer_sweep() { // well this is confusing
+  //   var t0,
+  //     t1 = d3_timer_queueHead,
+  //     time = Infinity;
+  //   while (t1) {
+  //     if (t1.f) {
+  //       t1 = t0 ? t0.n = t1.n : d3_timer_queueHead = t1.n;
+  //     } else {
+  //       if (t1.t < time) time = t1.t;
+  //       t1 = (t0 = t1).n;
+  //     }
+  //   }
+
+  //   //console.log(time);
+  //   d3_timer_queueTail = t0; // this reports out to its variable
+  //   return time;
+  // }
   function d3_format_precision(x, p) {
     return p - (x ? Math.ceil(Math.log(x) / Math.LN10) : 1);
   }
@@ -5678,11 +5736,14 @@
     return closestPoint;
   }
   d3.interpolateRgb = d3_interpolateRgb;
+  var thec = 0
   function d3_interpolateRgb(a, b) {
+    //console.log(thec);
     a = d3.rgb(a);
     b = d3.rgb(b);
     var ar = a.r, ag = a.g, ab = a.b, br = b.r - ar, bg = b.g - ag, bb = b.b - ab;
     return function(t) {
+      //console.log(t);
       return "#" + d3_rgb_hex(Math.round(ar + br * t)) + d3_rgb_hex(Math.round(ag + bg * t)) + d3_rgb_hex(Math.round(ab + bb * t));
     };
   }
@@ -8566,28 +8627,36 @@
 
   d3_selectionPrototype.transition = function(name) { // 1. very first step
 
-    var id = d3_transitionInheritId || ++d3_transitionId, ns = d3_transitionNamespace(name), subgroups = [], subgroup, node, 
+    var id = d3_transitionInheritId || ++d3_transitionId, 
+    	ns = d3_transitionNamespace(name),
+    	subgroups = [],
+    	subgroup,
+    	node, 
     	transition = d3_transitionInherit || {
       		time: Date.now(),
       		ease: d3_ease_cubicInOut,
       		delay: 0,
       		duration: 250
     	},
-    	j,
-    	m = this.length;
+    	//j,
+    	m = this.length;// in my code this is nothing
 
-	for ( j = -1; ++j < m; ) {
+    //console.log(this);
+	for ( j = -1; ++j < m; ) { // my optimization
 		var group = this[j], i, n = group.length;
   		subgroups.push(subgroup = []);
-		for ( i = -1; ++i < n; ) {
-			if (node = group[i]) d3_transitionNode(node, i, ns, id, transition); // this assignment makes no sense.. it works but does make sense
-				//console.log("This is name",id);// id add the different number ids to different transitions
+		for ( i = -1; ++i < n; ) { // my optimization
+			if ( node = group[i] ) { // if asignment is true
+				d3_transitionNode(node, i, ns, id, transition); 
 				subgroup.push(node);
 			}
 		}
-  
+	}
+
     return d3_transition(subgroups, ns, id);// id is a number that keeps going up
+
   };
+
   d3_selectionPrototype.interrupt = function(name) {
 
     return this.each(
@@ -8610,11 +8679,11 @@
   }
 
   function d3_transition(groups, ns, id) { // returns an object with the id and namespace
-    d3_subclass(groups, d3_transitionPrototype); // subclass is a var from around line 500 adds all the methods to the group
+    d3_subclass(groups, d3_transitionPrototype); // subclass is a var from around line 500 adds all the methods to the group// d3.select(d3_documentElement) is prototype
     groups.namespace = ns;
     groups.id = id;
-    //console.log(d3_transitionPrototype);
-    return groups;
+    //console.log(groups);
+    return groups; // at this point int the code the namespace has been added
   }
 
   var d3_transitionPrototype = [], // d3.transition.prototype
@@ -8676,6 +8745,8 @@
   };
 
   d3_transitionPrototype.filter = function(filter) {
+    //console.log("here you are");
+    //console.log(filter);
     var subgroups = [], subgroup, group, node;
     if (typeof filter !== "function") filter = d3_selection_filter(filter);
     for (var j = 0, m = this.length; j < m; j++) {
@@ -8900,67 +8971,80 @@
   }
 
   function d3_transitionNode(node, i, ns, id, inherit) {
-  	//console.log(node);
-    var lock = node[ns] || (node[ns] = {
-      active: 0,
-      count: 0
-    }), transition = lock[id];
-    if (!transition) {
-      var time = inherit.time;
-      transition = lock[id] = {
-        tween: new d3_Map(),
-        time: time,
-        delay: inherit.delay,
-        duration: inherit.duration,
-        ease: inherit.ease,
-        index: i
-      };
-      inherit = null;
-      ++lock.count;
-      d3.timer(function(elapsed) {
-        var delay = transition.delay, duration, ease, timer = d3_timer_active, tweened = [];
-        timer.t = delay + time;
-        if (delay <= elapsed) return start(elapsed - delay);
-        timer.c = start;
-        function start(elapsed) {
-          if (lock.active > id) return stop();
-          var active = lock[lock.active];
-          if (active) {
-            --lock.count;
-            delete lock[lock.active];
-            active.event && active.event.interrupt.call(node, node.__data__, active.index);
-          }
-          lock.active = id;
-          transition.event && transition.event.start.call(node, node.__data__, i);
-          transition.tween.forEach(function(key, value) {
-            if (value = value.call(node, node.__data__, i)) {
-              tweened.push(value);
-            }
-          });
-          ease = transition.ease;
-          duration = transition.duration;
-          d3.timer(function() {
-            timer.c = tick(elapsed || 1) ? d3_true : tick;
-            return 1;
+      var lock = node[ns] || (node[ns] = {
+          active: 0,
+          count: 0
+      }), 
+      transition = lock[id];
+
+      if (!transition) {
+          var time = inherit.time;
+          transition = lock[id] = {
+              tween: new d3_Map(),
+              time: time,
+              delay: inherit.delay,
+              duration: inherit.duration,
+              ease: inherit.ease,
+              index: i
+          };
+
+          inherit = null;
+
+          ++lock.count;
+
+          d3.timer(function(elapsed) {
+              //console.log("elapsed",elapsed);
+              var delay = transition.delay, 
+                  duration,
+                  ease,
+                  timer = d3_timer_active,
+                  tweened = [];
+
+              timer.t = delay + time;
+              if (delay <= elapsed) return start(elapsed - delay);
+              timer.c = start;
+              function start(elapsed) {
+                  if (lock.active > id) return stop();
+                  var active = lock[lock.active];
+                  if (active) {
+                      --lock.count;
+                      delete lock[lock.active];
+                      active.event && active.event.interrupt.call(node, node.__data__, active.index);
+                  }
+                  lock.active = id;
+                  transition.event && transition.event.start.call(node, node.__data__, i);
+                  transition.tween.forEach(function(key, value) {
+                      if (value = value.call(node, node.__data__, i)) {
+                          tweened.push(value);
+                      }
+                  });
+                  ease = transition.ease;
+                  duration = transition.duration;
+                  d3.timer(function() {
+                      timer.c = tick(elapsed || 1) ? d3_true : tick;
+                      return 1;
+                  }, 0, time);
+              }
+
+              function tick(elapsed) {
+                  if (lock.active !== id) return 1;
+                  var t = elapsed / duration, e = ease(t), n = tweened.length;
+                  while (n > 0) {
+                      tweened[--n].call(node, e);
+                  }
+                  if (t >= 1) {
+                      transition.event && transition.event.end.call(node, node.__data__, i);
+                      return stop();
+                  }
+              }
+
+              function stop() {
+                  if (--lock.count) delete lock[id]; else delete node[ns];
+                  return 1;
+              }
+
           }, 0, time);
-        }
-        function tick(elapsed) {
-          if (lock.active !== id) return 1;
-          var t = elapsed / duration, e = ease(t), n = tweened.length;
-          while (n > 0) {
-            tweened[--n].call(node, e);
-          }
-          if (t >= 1) {
-            transition.event && transition.event.end.call(node, node.__data__, i);
-            return stop();
-          }
-        }
-        function stop() {
-          if (--lock.count) delete lock[id]; else delete node[ns];
-          return 1;
-        }
-      }, 0, time);
-    }
+      }
   }
 
   d3.svg.axis = function() {
