@@ -5,7 +5,9 @@
 .theTip {
   position: absolute;
   text-align: center;
-  font: 19px sans-serif;
+  font: 19px helvetica;
+  color: #2A2B2B;
+  line-height: 12px;
   width: 200px;
   height: auto;
   padding: 10px;
@@ -20,4 +22,30 @@
   pointer-events: none;
 }
 
+.titleTip {
+  font: 14px helvetica;
+  font-weight: 100;
+}
+
+.totalTip {
+  color: #1E1E1F;
+  line-height: 1.3em;
+}
+
+.inRed {
+  color:#E82B27;
+  font: 14px;
+}
+
+.budget {
+  font-weight: 100;
+}
+.drawline {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #B1B3B5;
+    /*padding-bottom: 2px;*/
+    margin: 5px;
+}
 
