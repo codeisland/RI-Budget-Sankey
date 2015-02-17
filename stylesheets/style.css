@@ -1,0 +1,226 @@
+/* @override http://localhost:4000/stylesheets/styles.css */
+
+@import url(https://fonts.googleapis.com/css?family=Lato:300italic,700italic,300,700);
+
+body {
+  margin: 0;
+  padding: 1em 0;
+  font:18px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color:#101010;
+}
+
+div.site-width{
+    width: 90%;
+    max-width: 40rem;
+    margin: 0 auto;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color:#000;
+  margin:0 0 20px;
+}
+
+p, ul, ol, table, pre, dl {
+  margin:0 0 20px;
+}
+
+h1, h2, h3 {
+  line-height:1.1;
+}
+
+h1 {
+  font-size:28px;
+}
+
+h2 {
+  color:#000;
+}
+
+h3, h4, h5, h6 {
+  color:#000;
+}
+
+a {
+  color:#39c;
+  font-weight:400;
+  text-decoration:none;
+}
+
+a:hover{
+    text-decoration: underline;
+}
+
+a small {
+  font-size:11px;
+  color:#010101;
+  margin-top:-0.6em;
+  display:block;
+}
+
+.wrapper {
+  width:860px;
+  margin:0 auto;
+}
+
+blockquote {
+  border-left:1px solid #e5e5e5;
+  margin:0;
+  padding:0 0 0 20px;
+  font-style:italic;
+}
+
+code, pre {
+  font-family:Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal;
+  color:#333;
+  font-size:12px;
+}
+
+pre {
+  padding:8px 15px;
+  background: #f8f8f8;
+  border-radius:5px;
+  border:1px solid #e5e5e5;
+  overflow-x: auto;
+}
+
+table {
+  width:100%;
+  border-collapse:collapse;
+}
+
+th, td {
+  text-align:left;
+  padding:5px 10px;
+  border-bottom:1px solid #e5e5e5;
+}
+
+dt {
+  color:#444;
+  font-weight:700;
+}
+
+th {
+  color:#444;
+}
+
+img {
+  max-width:100%;
+}
+
+header {
+  background: #EBF4FF;
+  margin: -1em 0 1em;
+  padding: 1em;
+}
+header nav {
+  background: rgb(240,240,240);
+  margin: -1em;
+  padding: 1em;
+}
+header h1 {
+  float: left;
+}
+
+header a {
+  color: #545454;
+  margin: -1em 0;
+  padding: 7px 10px 7px 10px;
+}
+
+header a:first-child {
+  font-weight: bold;
+  margin-right: 1em;
+}
+
+/* YOU ARE HERE */
+.home nav .home,
+.about nav .about,
+.projects nav .projects,
+.members nav .members,
+.post nav .blog,
+.resources nav .resources {
+  background: #399fd3;
+  color: #FFF;
+}
+
+.hero {
+  background: #2f3d4a;
+  margin-top: -1em;
+  padding: 1em 0;
+}
+.hero h1 {
+  color: #fff;
+}
+.hero .site-width {
+  color: #fff;
+}
+
+/* Members list */
+
+.github-members ul {
+  padding: 0
+}
+.github-members .do-gooder {
+  -webkit-box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.25);
+  -moz-box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.25);
+  box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.25);
+
+  border-top: 1px solid #efefef;
+  border-left: 1px solid #efefef;
+  display: inline-block;
+  list-style: none;
+  margin: .25em .15em;
+  overflow: hidden;
+  text-align: center;
+  width: 18%;
+}
+.do-gooder a {
+  display: block;
+  padding: .5em;
+}
+.do-gooder h1 {
+  font-size: .65em;
+  margin: 0;
+}
+.do-gooder img {
+  max-width: 95%;
+}
+
+.blog-container {
+  padding: 1em 0 2em;
+}
+strong {
+  color:#222;
+  font-weight:700;
+}
+
+section {
+  width:500px;
+  float:right;
+  padding-bottom:50px;
+}
+
+small {
+  font-size:11px;
+}
+
+hr {
+  border:0;
+  background:#e5e5e5;
+  height:1px;
+  margin:0 0 20px;
+}
+
+footer {
+  margin-top: 30px;
+}
+footer img {
+  margin-left: -20px;
+}
+
+@media print, screen and (max-width: 480px) {
+  .github-members .do-gooder {
+    margin: .25em .15em;
+    width: 28%;
+  }
+}
