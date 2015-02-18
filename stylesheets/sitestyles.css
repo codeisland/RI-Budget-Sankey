@@ -1,0 +1,139 @@
+/* Lato - Google Font */
+@import url(https://fonts.googleapis.com/css?family=Lato:300italic,700italic,300,700);
+/* GLOBAL
+****************************/
+body {
+    margin: 0;
+    padding: 0;
+    font: 18px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #010101;
+}
+a {
+    color: #39c;
+    font-weight: 400;
+    text-decoration: none;
+    -webkit-transition: .25s ease all;
+    -moz-transition: .25s ease all;
+    -o-transition: .25s ease all;
+    transition: .25s ease all;
+}
+img {
+    max-width: 100%;
+}
+/* NAV BAR 
+****************************/
+.wrapper{
+    position: absolute;
+    background: rgb(240,240,240);
+    border-bottom: 1px solid rgb(230, 230, 230);
+    width: 960px;
+    height: 69px; 
+}
+header {
+    background: #2f3d4a;
+}
+header nav {
+    background: rgb(240,240,240);
+    height: auto;
+    padding: .1em;
+    position: relative;
+    border-bottom: 1px solid rgb(230, 230, 230);
+}
+header h1 {
+    float: left;
+}
+
+#links a {
+    padding: .4em;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 16px;
+}
+#links a,
+a#links-trigger {
+    color: #000;
+    color: #2F3D4A;
+    -webkit-transition: .25s ease all;
+    -moz-transition: .25s ease all;
+    -o-transition: .25s ease all;
+    transition: .25s ease all;
+}
+#links a:hover,
+a#links-trigger:hover {
+    color: #fedd44;
+    color: #39C;
+    text-decoration: none
+}
+#banner .logo img {
+    margin-right: 1em;
+    margin: 0 .5em;
+    position: relative;
+    top: 2px;
+}
+#banner, #links, #social {
+    display: inline-block;
+    vertical-align: middle;
+}
+#social {
+    position: relative;
+    bottom: 2px;
+    left: 5px;
+}
+#links-trigger {
+    display: none;
+}
+
+/* Responsive Styles (i.e. smaller screens) */
+/* 
+****************************/
+@media screen and (max-width: 860px) {
+    .wrapper{
+        height: 83px; 
+    }
+    header nav {
+        padding: 0;
+        border-bottom: none;
+    }
+    #banner {
+        display: block;
+        border-bottom: 1px solid rgb(230, 230, 230);
+    }
+    #banner .logo img {
+        padding: .5em;
+    }
+    #links-trigger {
+        display: inline-block;
+        position: absolute;
+        right: .5em;
+    margin: 1.5em 1.5em;    }
+    #links {
+        display: block;
+        max-height: 0;
+        overflow: hidden;
+        -webkit-transition: 0.8s ease max-height;
+        -moz-transition: 0.8s ease max-height;
+        -o-transition: 0.8s ease max-height;
+        transition: 0.8s ease max-height;
+    }
+    #links.show {
+        max-height: 400px;
+    }
+    #links.show, 
+    #links > a, 
+    #social {
+        display: block;
+        text-align: center;
+    }
+    #links > a, 
+    #social {
+        border-bottom: 1px solid rgb(230, 230, 230);
+        padding: .4em 0 .8em;
+        margin: .4em 0
+    }
+    #social {
+        margin-bottom: 0;
+    }
+    .text-right {
+        text-align: center;
+    }
+}
