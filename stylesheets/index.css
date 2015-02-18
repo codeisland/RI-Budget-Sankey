@@ -1,23 +1,19 @@
+body {
+  color: #010101;
+}
 #chart {
   font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 400;
   height: 600px;
 }
 
-.row form .row
-{
-  margin:0 -6px
+.rwd-break, .directions {
+  display: block;
+  display: none;
 }
-.row form .row .column,.row form .row .columns
-{
-  padding:0 6px
-}
-.row form .row.collapse
-{
-  margin:0
-}
-.row form .row.collapse .column,.row form .row.collapse .columns
-{
-  padding:0
+.directions {
+  font-style: italic;
+  font-size: .8em;
 }
 .row
 {
@@ -33,109 +29,49 @@
   min-width:0;
   margin:0 -15px
 }
-.row.collapse .column,.row.collapse .columns
-{
-  padding:0
-}
-.row .row
-{
-  width:auto;
-  max-width:none;
-  min-width:0;
-  margin:0 -15px
-}
 .row .row.collapse
 {
   margin:0
 }
-.one,.row .one
-{
-  width:8.33333%
+.graph-content, .graph-info, .footer {
+  margin-left:10px;
 }
-.two,.row .two
-{
-  width:16.66667%
+
+@media screen and (max-width: 860px) {
+
+  .directions {
+    display: inline;
+  }
+
+  .graph-content, .graph-info, .footer {
+    width: 60%;
+  }
 }
-.three,.row .three
-{
-  width:25%
+@media screen and (max-width: 750px) {
+  .rwd-break{
+    display: inline;
+  }
+
+  .graph-content{
+    width: 545px;
+  }
+
 }
-.four,.row .four
-{
-  width:33.33333%
+@media screen and (max-width: 550px) {
+
+  .graph-content{
+    width: 395px;
+  }
+
 }
-.five,.row .five
-{
-  width:41.66667%
+@media screen and (max-width: 400px) {
+
+  .graph-content{
+    width: 330px;
+  }
+
 }
-.six,.row .six
-{
-  width:50%
-}
-.seven,.row .seven
-{
-  width:58.33333%
-}
-.eight,.row .eight
-{
-  width:66.66667%
-}
-.nine,.row .nine
-{
-  width:75%
-}
-.ten,.row .ten
-{
-  width:83.33333%
-}
-.eleven,.row .eleven
-{
-  width:91.66667%
-}
-.twelve,.row .twelve
-{
-  width:100%
-}
-.row .offset-by-one
-{
-  margin-left:8.33333%
-}
-.row .offset-by-two
-{
-  margin-left:16.66667%
-}
-.row .offset-by-three
-{
-  margin-left:25%
-}
-.row .offset-by-four
-{
-  margin-left:33.33333%
-}
-.row .offset-by-five
-{
-  margin-left:41.66667%
-}
-.row .offset-by-six
-{
-  margin-left:50%
-}
-.row .offset-by-seven
-{
-  margin-left:58.33333%
-}
-.row .offset-by-eight
-{
-  margin-left:66.66667%
-}
-.row .offset-by-nine
-{
-  margin-left:75%
-}
-.row .offset-by-ten
-{
-  margin-left:83.33333%
-}
+
 
 .theTip {
   position: absolute;
@@ -158,7 +94,7 @@
 }
 
 .titleTip {
-  font: 14px helvetica;
+  font-size: 14px;
   font-weight: 100;
 }
 
