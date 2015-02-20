@@ -6,6 +6,9 @@ body {
   font-weight: 400;
   height: 600px;
 }
+p {
+  max-width: 650px;
+}
 
 .rwd-break, .directions {
   display: block;
