@@ -4,12 +4,10 @@ body {
 #chart {
   font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 400;
-  height: 600px;
 }
 p {
   max-width: 650px;
 }
-
 .rwd-break, .directions {
   display: block;
   display: none;
@@ -18,27 +16,28 @@ p {
   font-style: italic;
   font-size: .8em;
 }
-.row
-{
+.row {
   width:940px;
   max-width:100%;
   min-width:768px;
   margin:0 auto
 }
-.row .row
-{
+.row .row {
   width:auto;
   max-width:none;
   min-width:0;
   margin:0 -15px
 }
-.row .row.collapse
-{
+.row .row.collapse {
   margin:0
 }
 .graph-content, .graph-info, .footer {
   margin-left:10px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding: 1.5em 0em;
 }
+
 
 @media screen and (max-width: 860px) {
 
@@ -62,14 +61,14 @@ p {
 }
 @media screen and (max-width: 550px) {
 
-  .graph-content{
+  .graph-content, .graph-info {
     width: 395px;
   }
 
 }
 @media screen and (max-width: 400px) {
 
-  .graph-content{
+  .graph-content, .graph-info {
     width: 330px;
   }
 
@@ -121,5 +120,8 @@ p {
     border-top: 1px solid #B1B3B5;
     /*padding-bottom: 2px;*/
     margin: 5px;
+}
+.twitter-timeline {
+  width: 100%;
 }
 
