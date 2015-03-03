@@ -64,6 +64,9 @@ a#links-trigger:hover {
     color: #39C;
     text-decoration: none
 }
+/*.svg{
+    fill:#2F3D4A;
+}*/
 #banner .logo img {
     margin-right: 1em;
     margin: 0 .5em;
